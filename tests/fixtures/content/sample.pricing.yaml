@@ -1,0 +1,16 @@
+candidate_id: 9999
+slug: sample
+currency: USD
+tiers:
+  - name: Basic
+    price_monthly: 0
+    quota_monthly: 50
+    rate_limit_per_minute: 1
+    features: [50 req/mo]
+  - name: Pro
+    price_monthly: 4.99
+    quota_monthly: 1000
+    rate_limit_per_minute: 5
+    featured: true
+    features: [1k req/mo]
+overage_policy: throttle
