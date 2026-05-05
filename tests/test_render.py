@@ -122,3 +122,19 @@ def test_render_page_uses_openapi_fallback_for_response(tmp_path):
     html = output.read_text(encoding="utf-8")
     # sample.md sets response.example_json: "", so render.py derives from openapi.json
     assert "Item" in html
+
+
+def test_render_index_writes_html(tmp_path):
+    content_dir = FIXTURES / "content"
+    templates_dir = FIXTURES / "_templates"
+    output = render.render_index(
+        content_dir=content_dir,
+        templates_dir=templates_dir,
+        output_dir=tmp_path,
+        candidate_slugs=["sample", "another"],
+    )
+    assert output == tmp_path / "index.html"
+    html = output.read_text(encoding="utf-8")
+    assert "API Dominance — High-Performance APIs" in html
+    assert "sample" in html
+    assert "another" in html

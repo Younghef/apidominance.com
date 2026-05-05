@@ -151,9 +151,73 @@ def render_page(
     return out
 
 
+def render_index(
+    *,
+    content_dir: Path,
+    templates_dir: Path,
+    output_dir: Path,
+    candidate_slugs: list[str],
+) -> Path:
+    """Render content/_index.md → output_dir/index.html."""
+    index_path = content_dir / "_index.md"
+    if index_path.exists():
+        fm, body = parse_frontmatter(index_path.read_text(encoding="utf-8"))
+    else:
+        fm, body = {}, ""
+
+    env = Environment(
+        loader=FileSystemLoader(str(templates_dir)),
+        autoescape=select_autoescape(["html", "xml"]),
+        keep_trailing_newline=True,
+    )
+    tpl = env.get_template("index.html.j2")
+    ctx = dict(fm)
+    ctx["candidate_slugs"] = sorted(candidate_slugs)
+    ctx["body_md"] = body
+    html = tpl.render(**ctx)
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    out = output_dir / "index.html"
+    out.write_text(html, encoding="utf-8")
+    return out
+
+
 def main():
-    """Entry point. Walks content/, renders pages, writes to dist/."""
-    raise NotImplementedError("rendering pipeline lands in later tasks")
+    """Entry point — Vercel runs this. Walks content/, renders all pages + index."""
+    repo_root = Path(__file__).resolve().parents[1]
+    content_dir = repo_root / "content"
+    templates_dir = repo_root / "_templates"
+    output_dir = repo_root / "dist"
+
+    # Discover slugs from content/*.md (excluding _index.md)
+    slug_files = [p for p in sorted(content_dir.glob("*.md")) if p.stem != "_index"]
+    slugs = [p.stem for p in slug_files]
+
+    for slug in slugs:
+        out = render_page(
+            slug=slug,
+            content_dir=content_dir,
+            templates_dir=templates_dir,
+            output_dir=output_dir,
+            candidate_slugs=slugs,
+        )
+        print(f"rendered {out.relative_to(repo_root)}")
+
+    out = render_index(
+        content_dir=content_dir,
+        templates_dir=templates_dir,
+        output_dir=output_dir,
+        candidate_slugs=slugs,
+    )
+    print(f"rendered {out.relative_to(repo_root)}")
+
+    # Copy assets/ → dist/assets/
+    assets_src = repo_root / "assets"
+    assets_dst = output_dir / "assets"
+    if assets_dst.exists():
+        shutil.rmtree(assets_dst)
+    shutil.copytree(assets_src, assets_dst)
+    print(f"copied assets/ -> dist/assets/")
 
 
 if __name__ == "__main__":

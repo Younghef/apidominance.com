@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ seo.title }}</title>
+    <meta name="description" content="{{ seo.description }}">
+    {% if seo.keywords is defined and seo.keywords %}
+    <meta name="keywords" content="{{ seo.keywords | join(', ') }}">
+    {% endif %}
+    <link rel="canonical" href="https://apidominance.com/">
+    <meta property="og:title" content="{{ seo.title }}">
+    <meta property="og:description" content="{{ seo.description }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://apidominance.com/">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/site.css">
+</head>
+<body>
+    <style>
+      :root {
+        --accent-primary: {{ accent.primary | default("#6c2bd9") }};
+        --accent-primary-hover: {{ accent.primary_hover | default("#5b21c5") }};
+        --accent-primary-dark: {{ accent.primary_dark | default("#4c1d95") }};
+        --accent-hero-from: {{ accent.hero_gradient_from | default("#f5f0ff") }};
+        --accent-hero-to: {{ accent.hero_gradient_to | default("#eef2ff") }};
+        --accent-hover-bg: {{ accent.hover_bg | default("#f5f0ff") }};
+        --accent-primary-shadow: {{ accent.primary_shadow | default("rgba(108,43,217,0.3)") }};
+      }
+    </style>
+
+    <nav>
+        <div class="nav-inner">
+            <a href="/" class="logo">API<span>Dominance</span></a>
+            <div class="nav-links">
+                <a href="#apis">APIs</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="mailto:derekhefley@gmail.com">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero hero-index">
+        <div class="hero-index-inner">
+            <h1>{{ hero.headline | replace(hero.accent, '<span class="accent">' + hero.accent + '</span>') | safe }}</h1>
+            <p>{{ hero.description }}</p>
+            {% if hero.subtitle is defined and hero.subtitle %}
+            <p class="hero-subtitle">{{ hero.subtitle }}</p>
+            {% endif %}
+            <div class="hero-cta">
+                {% if hero.cta_primary is defined and hero.cta_primary %}
+                <a href="{{ hero.cta_primary.url }}" class="btn btn-primary">{{ hero.cta_primary.label }}</a>
+                {% endif %}
+                {% if hero.cta_secondary is defined and hero.cta_secondary %}
+                <a href="{{ hero.cta_secondary.url }}" class="btn btn-secondary" target="_blank">{{ hero.cta_secondary.label }}</a>
+                {% endif %}
+            </div>
+            {% if hero.badges is defined and hero.badges %}
+            <div class="hero-badges">
+                {% for badge in hero.badges %}
+                <div class="badge"><div class="badge-dot"></div> {{ badge }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    {% if candidate_slugs %}
+    <section class="section" id="apis">
+        <h2 class="section-title">Our APIs</h2>
+        <p class="section-sub">Production-ready APIs with free tiers to get started</p>
+        <div class="api-grid">
+            {% for s in candidate_slugs %}
+            <div class="api-card">
+                {% set logo_path = "assets/logos/" + s + ".jpg" %}
+                <div class="api-icon icon-purple">
+                    <img src="/{{ logo_path }}" alt="{{ s }} logo" onerror="this.style.display='none'" width="40" height="40">
+                </div>
+                <h3>{{ s | replace("-", " ") | title }}</h3>
+                <a href="/{{ s }}.html" class="btn btn-primary btn-sm">Learn More</a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="section" id="how-it-works" style="background:#f9fafb; max-width:100%; padding-left:24px; padding-right:24px;">
+        <div style="max-width:1100px; margin:0 auto;">
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-sub">Get started in under 2 minutes</p>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <h4>Sign Up Free</h4>
+                    <p>Create a free account on RapidAPI or Apify. No credit card required.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <h4>Get Your API Key</h4>
+                    <p>Subscribe to any of our APIs and get your unique API key instantly.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <h4>Make Requests</h4>
+                    <p>Start making API calls. Get structured JSON responses in milliseconds.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        {% if hero.cta_primary is defined and hero.cta_primary %}
+        <h2>Ready to Get Started?</h2>
+        <p>Try any API free with 50 requests per month. No credit card required.</p>
+        <div class="cta-buttons">
+            <a href="{{ hero.cta_primary.url }}" class="btn btn-white">{{ hero.cta_primary.label }}</a>
+        </div>
+        {% else %}
+        <h2>Ready to Get Started?</h2>
+        <p>Try any API free with 50 requests per month. No credit card required.</p>
+        <div class="cta-buttons">
+            <a href="https://rapidapi.com/user/derekhefley" class="btn btn-white" target="_blank">Start Free on RapidAPI</a>
+        </div>
+        {% endif %}
+    </section>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-links">
+                <a href="/">Home</a>
+                {% for s in candidate_slugs %}
+                <a href="/{{ s }}.html">{{ s | replace("-", " ") | title }}</a>
+                {% endfor %}
+                <a href="https://rapidapi.com/user/derekhefley" target="_blank">RapidAPI</a>
+                <a href="https://apify.com/derekhefley" target="_blank">Apify</a>
+                <a href="mailto:derekhefley@gmail.com">Contact</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 API Dominance. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
