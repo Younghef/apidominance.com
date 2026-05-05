@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
 REQUIRED_FRONTMATTER = {
@@ -88,6 +89,66 @@ def extract_response_example(spec: dict[str, Any]) -> str:
                 if "value" in ex_obj:
                     return json.dumps(ex_obj["value"], indent=2)
     return ""
+
+
+def _build_context(slug: str, content_dir: Path) -> dict[str, Any]:
+    """Read all sibling files for slug and produce a merged Jinja context dict."""
+    md_path = content_dir / f"{slug}.md"
+    fm, body = parse_frontmatter(md_path.read_text(encoding="utf-8"))
+    validate_frontmatter(fm, expected_slug=slug)
+
+    pricing_path = content_dir / f"{slug}.pricing.yaml"
+    pricing = yaml.safe_load(pricing_path.read_text(encoding="utf-8")) if pricing_path.exists() else {}
+
+    candidate_path = content_dir / f"{slug}.candidate.json"
+    candidate = json.loads(candidate_path.read_text(encoding="utf-8")) if candidate_path.exists() else {}
+
+    params = fm.get("params") or []
+    response = dict(fm.get("response") or {})
+    response.setdefault("description", "")
+    response.setdefault("example_json", "")
+
+    openapi_path = content_dir / f"{slug}.openapi.json"
+    if openapi_path.exists():
+        spec = json.loads(openapi_path.read_text(encoding="utf-8"))
+        if not params:
+            params = extract_params(spec)
+        if not response.get("example_json"):
+            response["example_json"] = extract_response_example(spec)
+
+    ctx = dict(fm)
+    ctx["params"] = params
+    ctx["response"] = response
+    ctx["pricing"] = pricing
+    ctx["candidate"] = candidate
+    ctx["body_md"] = body
+    return ctx
+
+
+def render_page(
+    *,
+    slug: str,
+    content_dir: Path,
+    templates_dir: Path,
+    output_dir: Path,
+    candidate_slugs: list[str] | None = None,
+) -> Path:
+    """Render content/<slug>.* → output_dir/<slug>.html. Returns the output path."""
+    ctx = _build_context(slug, content_dir)
+    ctx["candidate_slugs"] = candidate_slugs or []
+
+    env = Environment(
+        loader=FileSystemLoader(str(templates_dir)),
+        autoescape=select_autoescape(["html", "xml"]),
+        keep_trailing_newline=True,
+    )
+    tpl = env.get_template("page.html.j2")
+    html = tpl.render(**ctx)
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    out = output_dir / f"{slug}.html"
+    out.write_text(html, encoding="utf-8")
+    return out
 
 
 def main():

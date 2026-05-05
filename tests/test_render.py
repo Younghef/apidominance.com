@@ -78,3 +78,47 @@ def test_extract_params_with_no_paths():
 def test_extract_response_example_with_no_example():
     spec = {"paths": {"/x": {"get": {"responses": {"200": {"description": "x", "content": {}}}}}}}
     assert render.extract_response_example(spec) == ""
+
+
+def test_render_page_writes_html(tmp_path):
+    content_dir = FIXTURES / "content"
+    templates_dir = FIXTURES / "_templates"
+    output = render.render_page(
+        slug="sample",
+        content_dir=content_dir,
+        templates_dir=templates_dir,
+        output_dir=tmp_path,
+    )
+    assert output == tmp_path / "sample.html"
+    html = output.read_text(encoding="utf-8")
+    assert "Sample API | API Dominance" in html
+    assert "Real-Time Sample Data via API" in html
+
+
+def test_render_page_uses_openapi_fallback_for_params(tmp_path):
+    content_dir = FIXTURES / "content"
+    templates_dir = FIXTURES / "_templates"
+    output = render.render_page(
+        slug="sample",
+        content_dir=content_dir,
+        templates_dir=templates_dir,
+        output_dir=tmp_path,
+    )
+    html = output.read_text(encoding="utf-8")
+    # sample.md sets params: [], so render.py derives from sample.openapi.json
+    assert "query" in html
+    assert "limit" in html
+
+
+def test_render_page_uses_openapi_fallback_for_response(tmp_path):
+    content_dir = FIXTURES / "content"
+    templates_dir = FIXTURES / "_templates"
+    output = render.render_page(
+        slug="sample",
+        content_dir=content_dir,
+        templates_dir=templates_dir,
+        output_dir=tmp_path,
+    )
+    html = output.read_text(encoding="utf-8")
+    # sample.md sets response.example_json: "", so render.py derives from openapi.json
+    assert "Item" in html

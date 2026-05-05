@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html><head><title>{{ seo.title }}</title></head>
+<body>
+  <h1>{{ hero.headline }}</h1>
+  <pre>{{ code_example.body }}</pre>
+  <ul class="features">
+  {% for f in features %}<li>{{ f.title }}: {{ f.description }}</li>{% endfor %}
+  </ul>
+  <table class="params">
+  {% for p in params %}<tr><td>{{ p.name }}</td><td>{{ p.type }}</td></tr>{% endfor %}
+  </table>
+  <pre class="response">{{ response.example_json }}</pre>
+  <section class="pricing">
+  {% for t in pricing.tiers %}<div>{{ t.name }} ${{ t.price_monthly }}</div>{% endfor %}
+  </section>
+</body></html>
