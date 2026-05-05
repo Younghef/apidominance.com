@@ -14,6 +14,7 @@ accent:
   hero_gradient_from: "#eff6ff"
   hero_gradient_to: "#e0f2fe"
   hover_bg: "#eff6ff"
+  primary_shadow: "rgba(37,99,235, 0.3)"
 
 hero:
   headline: "Real-Time Sample Data via API"

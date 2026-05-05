@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ seo.title }}</title>
+    <meta name="description" content="{{ seo.description }}">
+    <meta name="keywords" content="{{ seo.keywords | join(', ') }}">
+    <link rel="canonical" href="https://apidominance.com/{{ slug }}.html">
+    <meta property="og:title" content="{{ seo.title }}">
+    <meta property="og:description" content="{{ seo.description }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://apidominance.com/{{ slug }}.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/site.css">
+</head>
+<body>
+    <style>
+      :root {
+        --accent-primary: {{ accent.primary }};
+        --accent-primary-hover: {{ accent.primary_hover }};
+        --accent-primary-dark: {{ accent.primary_dark }};
+        --accent-hero-from: {{ accent.hero_gradient_from }};
+        --accent-hero-to: {{ accent.hero_gradient_to }};
+        --accent-hover-bg: {{ accent.hover_bg }};
+        --accent-primary-shadow: {{ accent.primary_shadow | default("rgba(0,0,0,0.1)") }};
+      }
+    </style>
+
+    <nav>
+        <div class="nav-inner">
+            <a href="/" class="logo">API<span>Dominance</span></a>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="#pricing">Pricing</a>
+                <a href="mailto:derekhefley@gmail.com">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-inner">
+            <div>
+                <h1>{{ hero.headline | replace(hero.accent, '<span class="accent">' + hero.accent + '</span>') | safe }}</h1>
+                <p>{{ hero.description }}</p>
+                <p class="hero-subtitle">{{ hero.subtitle }}</p>
+                <div class="hero-cta">
+                    <a href="{{ hero.cta_primary.url }}" class="btn btn-primary" target="_blank">{{ hero.cta_primary.label }}</a>
+                    <a href="{{ hero.cta_secondary.url }}" class="btn btn-secondary" target="_blank">{{ hero.cta_secondary.label }}</a>
+                </div>
+                <div class="hero-badges">
+                    {% for badge in hero.badges %}
+                    <div class="badge"><div class="badge-dot"></div> {{ badge }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="code-block">
+                <div class="code-header">
+                    <div class="code-dot dot-red"></div>
+                    <div class="code-dot dot-yellow"></div>
+                    <div class="code-dot dot-green"></div>
+                    <span>{{ code_example.filename }}</span>
+                </div>
+                <div class="code-body">
+                    <pre>{{ code_example.body | e }}</pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title">Why This API</h2>
+        <p class="section-sub">No scraping headaches. Just structured data.</p>
+        <div class="features-grid">
+            {% for f in features %}
+            <div class="feature">
+                <div class="feature-icon">{{ f.icon }}</div>
+                <h4>{{ f.title }}</h4>
+                <p>{{ f.description }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% if params %}
+    <section class="section params-section">
+        <h2 class="section-title">API Parameters</h2>
+        <p class="section-sub">Simple, powerful query parameters</p>
+        <table class="params-table">
+            <thead>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Required</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in params %}
+                <tr>
+                    <td><code>{{ p.name }}</code></td>
+                    <td>{{ p.type }}</td>
+                    <td>{{ p.description }}</td>
+                    <td>
+                        {% if p.required %}
+                        <span class="param-required">Required</span>
+                        {% else %}
+                        <span class="param-optional">Optional</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    {% endif %}
+
+    <section class="use-cases">
+        <div class="use-cases-inner">
+            <h2 class="section-title">Built For Your Use Case</h2>
+            <p class="section-sub">From side projects to enterprise platforms</p>
+            <div class="uc-grid">
+                {% for uc in use_cases %}
+                <div class="uc-card">
+                    <h4>{{ uc.title }}</h4>
+                    <p>{{ uc.description }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    {% if response.example_json %}
+    <section class="response-section">
+        <div class="response-inner">
+            <div>
+                <h2>Rich, Structured Responses</h2>
+                <p>{{ response.description }}</p>
+            </div>
+            <div class="response-code">
+                <pre>{{ response.example_json | e }}</pre>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if pricing and pricing.tiers %}
+    <section class="section" id="pricing">
+        <h2 class="section-title">Simple, Transparent Pricing</h2>
+        <p class="section-sub">Start free. Scale when you're ready.</p>
+        <div class="pricing-grid">
+            {% for t in pricing.tiers %}
+            <div class="plan{% if t.featured %} featured{% endif %}">
+                <div class="plan-name">{{ t.name }}</div>
+                {% if t.price_monthly == 0 %}
+                <div class="plan-price">Free</div>
+                {% else %}
+                <div class="plan-price">${{ t.price_monthly }}<span>/mo</span></div>
+                {% endif %}
+                {% if t.description is defined and t.description %}
+                <div class="plan-desc">{{ t.description }}</div>
+                {% endif %}
+                <ul class="plan-features">
+                    {% for feat in t.features %}
+                    <li>{{ feat }}</li>
+                    {% endfor %}
+                </ul>
+                {% if candidate.rapidapi_url is defined and candidate.rapidapi_url %}
+                <a href="{{ candidate.rapidapi_url }}" class="btn btn-{% if t.featured %}primary{% else %}secondary{% endif %} btn-sm" target="_blank">{{ t.cta_label | default("Subscribe" if t.price_monthly > 0 else "Start Free") }}</a>
+                {% elif t.cta_label is defined and t.cta_label %}
+                <a href="#" class="btn btn-{% if t.featured %}primary{% else %}secondary{% endif %} btn-sm">{{ t.cta_label }}</a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="cta-section">
+        <h2>{{ cta_section.headline }}</h2>
+        <p>{{ cta_section.body }}</p>
+        <div class="cta-buttons">
+            {% for btn in cta_section.buttons %}
+            <a href="{{ btn.url }}" class="btn btn-white" target="_blank">{{ btn.label }}</a>
+            {% endfor %}
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-links">
+                <a href="/">Home</a>
+                {% for s in candidate_slugs %}
+                <a href="/{{ s }}.html">{{ s }}</a>
+                {% endfor %}
+                <a href="https://rapidapi.com/user/derekhefley" target="_blank">RapidAPI</a>
+                <a href="https://apify.com/derekhefley" target="_blank">Apify</a>
+                <a href="mailto:derekhefley@gmail.com">Contact</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 API Dominance. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
