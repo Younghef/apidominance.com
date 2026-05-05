@@ -1,0 +1,9 @@
+{
+  "id": 1,
+  "slug": "google-jobs-scraper",
+  "title": "Google Jobs Scraper",
+  "marketplace": "rapidapi",
+  "marketplace_id": "google-jobs-scraper",
+  "rapidapi_url": "https://rapidapi.com/derekhefley/api/google-jobs-scraper",
+  "apify_url": "https://apify.com/derekhefley/google-jobs-scraper"
+}
