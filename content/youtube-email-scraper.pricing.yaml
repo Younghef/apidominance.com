@@ -1,0 +1,36 @@
+candidate_id: 2
+slug: youtube-email-scraper
+currency: USD
+tiers:
+  - name: "Basic"
+    price_monthly: 0
+    quota_monthly: 50
+    rate_limit_per_minute: 60
+    cta_label: "Start Free"
+    features:
+      - "50 requests / month"
+      - "1 request / second"
+      - "Standard support"
+      - "Full API access"
+  - name: "Pro"
+    price_monthly: 4.99
+    quota_monthly: 10000
+    rate_limit_per_minute: 300
+    featured: true
+    cta_label: "Subscribe"
+    features:
+      - "10,000 requests / month"
+      - "5 requests / second"
+      - "Priority support"
+      - "Full API access"
+  - name: "Ultra"
+    price_monthly: 19.99
+    quota_monthly: 100000
+    rate_limit_per_minute: 600
+    cta_label: "Subscribe"
+    features:
+      - "100,000 requests / month"
+      - "10 requests / second"
+      - "Priority support"
+      - "Full API access"
+overage_policy: throttle
