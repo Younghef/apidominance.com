@@ -42,29 +42,27 @@
         </div>
     </nav>
 
-    <section class="hero hero-index">
-        <div class="hero-index-inner">
-            <h1>{{ hero.headline | replace(hero.accent, '<span class="accent">' + hero.accent + '</span>') | safe }}</h1>
-            <p>{{ hero.description }}</p>
-            {% if hero.subtitle is defined and hero.subtitle %}
-            <p class="hero-subtitle">{{ hero.subtitle }}</p>
+    <section class="hero hero-centered">
+        <h1>{{ hero.headline | replace(hero.accent, '<span class="accent">' + hero.accent + '</span>') | safe }}</h1>
+        <p>{{ hero.description }}</p>
+        {% if hero.subtitle is defined and hero.subtitle %}
+        <p class="hero-subtitle">{{ hero.subtitle }}</p>
+        {% endif %}
+        <div class="hero-cta">
+            {% if hero.cta_primary is defined and hero.cta_primary %}
+            <a href="{{ hero.cta_primary.url }}" class="btn btn-primary">{{ hero.cta_primary.label }}</a>
             {% endif %}
-            <div class="hero-cta">
-                {% if hero.cta_primary is defined and hero.cta_primary %}
-                <a href="{{ hero.cta_primary.url }}" class="btn btn-primary">{{ hero.cta_primary.label }}</a>
-                {% endif %}
-                {% if hero.cta_secondary is defined and hero.cta_secondary %}
-                <a href="{{ hero.cta_secondary.url }}" class="btn btn-secondary" target="_blank">{{ hero.cta_secondary.label }}</a>
-                {% endif %}
-            </div>
-            {% if hero.badges is defined and hero.badges %}
-            <div class="hero-badges">
-                {% for badge in hero.badges %}
-                <div class="badge"><div class="badge-dot"></div> {{ badge }}</div>
-                {% endfor %}
-            </div>
+            {% if hero.cta_secondary is defined and hero.cta_secondary %}
+            <a href="{{ hero.cta_secondary.url }}" class="btn btn-secondary" target="_blank">{{ hero.cta_secondary.label }}</a>
             {% endif %}
         </div>
+        {% if hero.badges is defined and hero.badges %}
+        <div class="hero-badges" style="justify-content:center;">
+            {% for badge in hero.badges %}
+            <div class="badge"><div class="badge-dot"></div> {{ badge }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
     </section>
 
     {% if candidate_slugs %}
@@ -73,12 +71,14 @@
         <p class="section-sub">Production-ready APIs with free tiers to get started</p>
         <div class="api-grid">
             {% for s in candidate_slugs %}
+            {% set icon_class = "icon-blue" if s == "google-jobs-scraper" else "icon-purple" %}
             <div class="api-card">
                 {% set logo_path = "assets/logos/" + s + ".jpg" %}
-                <div class="api-icon icon-purple">
+                <div class="api-icon {{ icon_class }}">
                     <img src="/{{ logo_path }}" alt="{{ s }} logo" onerror="this.style.display='none'" width="40" height="40">
                 </div>
                 <h3>{{ s | replace("-", " ") | title }}</h3>
+                <div class="price">Free tier: 50 requests/month</div>
                 <a href="/{{ s }}.html" class="btn btn-primary btn-sm">Learn More</a>
             </div>
             {% endfor %}

@@ -129,3 +129,45 @@ footer a:hover { color: #fff; }
     .params-table { font-size: 0.8rem; }
     .nav-links { gap: 16px; }
 }
+
+/* ===== Homepage-specific styles ===== */
+
+/* Hero — centered variant (homepage overrides the 2-col candidate hero) */
+.hero-centered { text-align: center; }
+.hero-centered h1 { font-size: clamp(2rem, 5vw, 3.2rem); }
+.hero-centered p { max-width: 600px; margin-left: auto; margin-right: auto; }
+.hero-centered .hero-cta { justify-content: center; }
+
+/* Stats bar */
+.stats { display: flex; justify-content: center; gap: 60px; padding: 48px 24px; max-width: 700px; margin: 0 auto; }
+.stat { text-align: center; }
+.stat-num { font-size: 2rem; font-weight: 800; color: var(--accent-primary, #6c2bd9); }
+.stat-label { font-size: 0.85rem; color: #777; margin-top: 4px; }
+
+/* API card grid */
+.api-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; }
+.api-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 36px; transition: all 0.3s; }
+.api-card:hover { border-color: var(--accent-primary, #6c2bd9); box-shadow: 0 8px 30px rgba(108,43,217,0.1); transform: translateY(-4px); }
+.api-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; }
+.api-card p { color: #666; margin-bottom: 20px; font-size: 0.95rem; }
+.api-card .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.api-card .price { font-size: 0.9rem; color: var(--accent-primary, #6c2bd9); font-weight: 600; margin-bottom: 16px; }
+
+/* API icon */
+.api-icon { width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 20px; }
+.icon-purple { background: #f3e8ff; }
+.icon-blue { background: #e0f2fe; }
+
+/* Tag pill */
+.tag { background: #f3f4f6; color: #555; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; }
+
+/* How It Works steps */
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 32px; text-align: center; }
+.step { padding: 24px; }
+.step-num { width: 48px; height: 48px; border-radius: 50%; background: var(--accent-primary, #6c2bd9); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; margin: 0 auto 16px; }
+.step h4 { font-size: 1.1rem; margin-bottom: 8px; }
+.step p { color: #666; font-size: 0.9rem; margin-bottom: 0; }
+
+@media (max-width: 640px) {
+    .stats { gap: 32px; }
+}
