@@ -53,3 +53,28 @@ def test_validate_frontmatter_rejects_slug_mismatch():
     fm, _ = render.parse_frontmatter(text)
     with pytest.raises(ValueError, match="does not match filename"):
         render.validate_frontmatter(fm, expected_slug="other")
+
+
+def test_extract_params_from_openapi():
+    spec = json.loads((FIXTURES / "content" / "sample.openapi.json").read_text())
+    params = render.extract_params(spec)
+    assert params == [
+        {"name": "query", "type": "string", "description": "Search query", "required": True},
+        {"name": "limit", "type": "integer", "description": "Max results", "required": False},
+    ]
+
+
+def test_extract_response_example_from_openapi():
+    spec = json.loads((FIXTURES / "content" / "sample.openapi.json").read_text())
+    out = render.extract_response_example(spec)
+    parsed = json.loads(out)
+    assert parsed == {"results": [{"id": 1, "name": "Item"}], "total": 1}
+
+
+def test_extract_params_with_no_paths():
+    assert render.extract_params({"openapi": "3.0.0", "paths": {}}) == []
+
+
+def test_extract_response_example_with_no_example():
+    spec = {"paths": {"/x": {"get": {"responses": {"200": {"description": "x", "content": {}}}}}}}
+    assert render.extract_response_example(spec) == ""

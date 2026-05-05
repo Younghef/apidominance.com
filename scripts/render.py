@@ -44,6 +44,52 @@ def validate_frontmatter(fm: dict[str, Any], *, expected_slug: str) -> None:
         )
 
 
+def _first_get_op(spec: dict[str, Any]) -> dict[str, Any] | None:
+    for path, methods in (spec.get("paths") or {}).items():
+        if not isinstance(methods, dict):
+            continue
+        op = methods.get("get") or methods.get("post")
+        if op:
+            return op
+    return None
+
+
+def extract_params(spec: dict[str, Any]) -> list[dict[str, Any]]:
+    """Return [{name, type, description, required}] from the first endpoint."""
+    op = _first_get_op(spec)
+    if not op:
+        return []
+    out = []
+    for p in op.get("parameters") or []:
+        out.append({
+            "name": p.get("name", ""),
+            "type": (p.get("schema") or {}).get("type", "string"),
+            "description": p.get("description", ""),
+            "required": bool(p.get("required", False)),
+        })
+    return out
+
+
+def extract_response_example(spec: dict[str, Any]) -> str:
+    """JSON-string example from the first 2xx response of the first endpoint."""
+    op = _first_get_op(spec)
+    if not op:
+        return ""
+    for code, resp in (op.get("responses") or {}).items():
+        if not str(code).startswith("2"):
+            continue
+        content = resp.get("content") or {}
+        for media, body in content.items():
+            ex = body.get("example")
+            if ex is not None:
+                return json.dumps(ex, indent=2)
+            examples = body.get("examples") or {}
+            for _, ex_obj in examples.items():
+                if "value" in ex_obj:
+                    return json.dumps(ex_obj["value"], indent=2)
+    return ""
+
+
 def main():
     """Entry point. Walks content/, renders pages, writes to dist/."""
     raise NotImplementedError("rendering pipeline lands in later tasks")
